@@ -1,0 +1,42 @@
+* {
+    box-sizing: border-box;
+}
+
+.game {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: gray  ;
+    padding: 5px;
+}
+
+.puzzleField {
+    display: grid;
+
+}
+
+.puzzleBox {
+    border: 1px solid black;
+    margin: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 25px;
+    /* text-shadow: 1px 1px black; */
+    background-color: white;
+    box-shadow: 3px 3px black;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.emptyBox {
+    background-color: black;
+    margin: 3px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+
