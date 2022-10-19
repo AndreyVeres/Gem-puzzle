@@ -1,0 +1,40 @@
+$green : #4B9200;
+$orange : #F9804B;
+$yellow : #FFEE2E;
+$orange__gradient : #FED290;
+$pink__gradient : #FEBDAB;
+$red : #D31414;
+$black__blue : #333B41;
+$gray : #767474;
+$gray__smoly : #ABABAB;
+$light__gray : #F1F3F2;
+$frosted_glass_white : #FDFDFF;
+$white : #ffffff;
+$black : #000000;
+$hoverBtn : #E47209;
+
+$desctop : 1001px;
+$tablet : 640px;
+$mobile : 320px;
+%Roboto-700 {
+    font-family: 'Roboto-Bold', sans-serif;
+    font-weight: 700;
+}
+
+%Roboto-300 {
+    font-family: 'Roboto-Light', sans-serif;
+    font-weight: 300;
+    
+}
+
+%Roboto-400 {
+    font-family: 'Roboto-Regular', sans-serif;
+    font-weight: 400;
+    
+}
+
+%Roboto-500 {
+    font-family: 'Roboto-Medium', sans-serif;
+    font-weight: 500;
+    
+}
