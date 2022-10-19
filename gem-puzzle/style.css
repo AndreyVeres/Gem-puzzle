@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+}
+
+.game {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(94, 5, 5, 0.801)  ;
+    padding: 5px;
+}
+
+.puzzleField {
+    display: grid;
+
+}
+
+.message {
+    color: black;
+    margin-top: 16%;
+    font-size: 22px;
+    text-align: center;
+    display: none;
+}
+
+.puzzleBox {
+    border: 1px solid black;
+    margin: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 25px;
+    /* text-shadow: 1px 1px black; */
+    background-color: white;
+    box-shadow: 3px 3px black;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 7px;
+}
+
+.emptyBox {
+    background-color: black;
+    margin: 3px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 7px;
+}
+
+
