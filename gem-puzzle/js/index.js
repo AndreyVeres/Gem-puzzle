@@ -49,12 +49,12 @@ function renderField(mas) {
     const field = document.createElement('div');
     const fieldBox = document.createElement('div')
     const game = document.createElement('div');
-    field.classList.add('puzzleField')
-    field.style.gridTemplateColumns = `repeat(${mas.length} , 80px)`
-    field.style.gridTemplateRows = `repeat(${mas.length} , 80px)`
-    document.body.prepend(game)
+    field.classList.add('puzzleField');
+    field.style.gridTemplateColumns = `repeat(${mas.length} , 80px)`;
+    field.style.gridTemplateRows = `repeat(${mas.length} , 80px)`;
+    document.body.prepend(game);
     game.classList.add('game');
-    game.append(field)
+    game.append(field);
 
     for (let i = 0; i < mas.length; i++) {
         for (let k = 0; k < mas.length; k++) {
@@ -72,13 +72,21 @@ function renderField(mas) {
         }
     }
 
+    const controlBox = document.createElement('div');
+    controlBox.classList.add('controls');
+
     const message = document.createElement('div');
     message.classList.add('message')
-    message.textContent = `Hooray! You solved the puzzle in 
-    ${new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3)} 
-    and ${aboutGame.steps} moves!`;
-    game.insertAdjacentElement("afterend" , message)
+    message.textContent = 'xoxo'
+    controlBox.insertAdjacentElement("afterbegin", message)
+    game.prepend(controlBox)
 
+    // for (let i = 0; i < 6; i++) {
+    //     const button = document.createElement('button');
+    //     button.textContent = `${i + 3}X${i + 3}`;
+    //     button.setAttribute('data-size', i + 3)
+    //     controlBox.append(button)
+    // }
     game.addEventListener('click', (e) => {
         movePuzzle(e)
     });
@@ -89,12 +97,23 @@ function startTimer() {
     if (!aboutGame.InProgress) {
         aboutGame.InProgress = true,
             aboutGame.startGame = new Date();
+        let timerPlace = document.createElement('p');
+        document.querySelector('game').append(timerPlace)
+        let time = setInterval(() => {
+            timerPlace.textContent = `${new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3)}`
+            console.log(new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3))
+
+        }, 1000);
     }
-    aboutGame.steps++;
 
-
-    
 }
+
+function countSteps() {
+    aboutGame.steps++;
+    console.log(aboutGame.steps)
+}
+
+
 
 function checkWinCondition() {
     let arr = []
@@ -121,10 +140,8 @@ function checkWinCondition() {
 
 function movePuzzle(e) {
     startTimer()
-    // console.log(new Date(new Date() - aboutGame.startGame).getMinutes())
-    console.log(aboutGame)
-    console.log(new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3))
-    // console(new Date(new Date() - aboutGame.startGame))
+    countSteps()
+
     if (e.target.classList.contains('puzzleBox')) {
         let width = document.querySelector('.puzzleBox').clientWidth + 8;
         // console.dir(elementWidth)
@@ -164,15 +181,6 @@ function movePuzzle(e) {
             document.getElementById(`${row}-${col + 1}`).id = `${row}-${col}`;
             e.target.id = `${row}-${col + 1}`;
         }
-
-        if (checkWinCondition()) {
-            document.querySelector('.message').style.display = 'block';
-
-
-        }
-        // let win = checkWinCondition()
-        // console.log(win)
     }
-
 }
 
