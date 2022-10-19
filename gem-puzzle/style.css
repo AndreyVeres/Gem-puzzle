@@ -3,12 +3,11 @@
 }
 
 .game {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     background-color: rgba(94, 5, 5, 0.801)  ;
-    padding: 5px;
+
 }
 
 .puzzleField {
