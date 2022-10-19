@@ -27,20 +27,15 @@ function initMatrix(x, y) {
     let mas = new Array(x)
     let i = 0;
     for (let row = 0; row < x; row++) {
-        
         mas[row] = [];
         for (let col = 0; col < y; col++) {
             mas[row][col] = i;
-            
             i++
             aboutGame.winCondition.push(i)
-           
         }
-
     }
     aboutGame.winCondition.pop()
     aboutGame.winCondition.push(0)
-
     //sort
     for (let i = 0; i < mas.length; i++) {
         mas[i].sort(() => Math.random() - 0.5)
@@ -77,6 +72,13 @@ function renderField(mas) {
         }
     }
 
+    const message = document.createElement('div');
+    message.classList.add('message')
+    message.textContent = `Hooray! You solved the puzzle in 
+    ${new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3)} 
+    and ${aboutGame.steps} moves!`;
+    game.insertAdjacentElement("afterend" , message)
+
     game.addEventListener('click', (e) => {
         movePuzzle(e)
     });
@@ -89,6 +91,9 @@ function startTimer() {
             aboutGame.startGame = new Date();
     }
     aboutGame.steps++;
+
+
+    
 }
 
 function checkWinCondition() {
@@ -99,7 +104,6 @@ function checkWinCondition() {
         let current = document.getElementById(`${row}-${col}`);
         if (parseInt(current.textContent === 0)) continue
         arr.push(parseInt(current.textContent))
-
         if (row == 3 && col == 3) break;
         col++
         if (col == 3) {
@@ -112,12 +116,15 @@ function checkWinCondition() {
             return false
         }
     }
-    return 'You win'
+    return true;
 }
 
 function movePuzzle(e) {
     startTimer()
-    console.log(aboutGame.winCondition)
+    // console.log(new Date(new Date() - aboutGame.startGame).getMinutes())
+    console.log(aboutGame)
+    console.log(new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3))
+    // console(new Date(new Date() - aboutGame.startGame))
     if (e.target.classList.contains('puzzleBox')) {
         let width = document.querySelector('.puzzleBox').clientWidth + 8;
         // console.dir(elementWidth)
@@ -158,8 +165,14 @@ function movePuzzle(e) {
             e.target.id = `${row}-${col + 1}`;
         }
 
+        if (checkWinCondition()) {
+            document.querySelector('.message').style.display = 'block';
 
-        let win = checkWinCondition()
-        console.log(win)
+
+        }
+        // let win = checkWinCondition()
+        // console.log(win)
     }
+
 }
+

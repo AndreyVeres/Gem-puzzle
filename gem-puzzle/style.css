@@ -7,13 +7,21 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: gray  ;
+    background-color: rgba(94, 5, 5, 0.801)  ;
     padding: 5px;
 }
 
 .puzzleField {
     display: grid;
 
+}
+
+.message {
+    color: black;
+    margin-top: 16%;
+    font-size: 22px;
+    text-align: center;
+    display: none;
 }
 
 .puzzleBox {
@@ -29,6 +37,7 @@
     box-shadow: 3px 3px black;
     cursor: pointer;
     transition: all 0.2s;
+    border-radius: 7px;
 }
 
 .emptyBox {
@@ -37,6 +46,7 @@
     padding: 10px;
     cursor: pointer;
     transition: all 0.2s;
+    border-radius: 7px;
 }
 
 
