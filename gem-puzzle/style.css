@@ -16,9 +16,8 @@ body {
 
 .puzzleField {
     display: grid;
+    width: 700px;
 }
-
-
 
 .message {
     color: #fff;
@@ -36,13 +35,17 @@ body {
     align-items: center;
     padding: 10px;
     font-size: 25px;
-    /* text-shadow: 1px 1px black; */
+    aspect-ratio: 1 /1;
     background-color: white;
     box-shadow: 3px 3px black;
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 7px;
+   
+    
 }
+
+
 
 .emptyBox {
     background-color: black;
@@ -51,6 +54,38 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 7px;
+
 }
+
+
+@media (max-width : 715px){
+    .puzzleField {
+        width: 600px;
+    }
+}
+
+@media (max-width : 600px){
+    .puzzleField {
+        width: 450px;
+    }
+}
+
+@media (max-width : 450px){
+    .puzzleField {
+        width: 350px;
+    }
+}
+
+@media (max-width : 360px){
+    .puzzleField {
+        width: 320px;
+    }
+}
+
+
+
+
+
+
 
 

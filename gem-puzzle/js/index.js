@@ -1,29 +1,22 @@
+
 let aboutGame = {
     InProgress: false,
     steps: 0,
     startGame: null,
     endGame: null,
-    winCondition: []
-}
+    winCondition: [],
+    InProgress: false,
+    size: 4,
 
+}
 initMatrix(4, 4);
-document.querySelectorAll('button').forEach(button => {
-    button.addEventListener('click', function () {
-        if (document.querySelector('.game')) {
-            clearField()
-        }
-        let size = button.getAttribute('data-size')
-        initMatrix(size, size)
-    })
-});
-let gameInProgress = false;
-let steps = 0;
-function clearField() {
-    document.querySelector('.game').remove();
-};
+
 
 function initMatrix(x, y) {
-    aboutGame.winCondition = []
+    if (document.querySelector('.wrapper')) {
+        clearField()
+    }
+    aboutGame.winCondition = [];
     let mas = new Array(x)
     let i = 0;
     for (let row = 0; row < x; row++) {
@@ -44,18 +37,63 @@ function initMatrix(x, y) {
 
     renderField(mas)
 }
+function renderButtons(game) {
+    const buttonBox = document.createElement('div');
+    buttonBox.classList.add('buttons');
+    game.prepend(buttonBox);
+    for (let i = 0; i < 6; i++) {
+        const button = document.createElement('button');
+        button.textContent = `${i + 3}X${i + 3}`;
+        button.setAttribute('data-size', i + 3)
+        buttonBox.append(button)
+
+        button.addEventListener('click', function () {
+            if (document.querySelector('.wrapper')) {
+                clearField()
+            }
+           
+            let size = button.getAttribute('data-size');
+            aboutGame.size = size;
+           
+            initMatrix(aboutGame.size, aboutGame.size)
+        })
+
+    }
+}
+
+function renderControls(game) {
+    const controlsBox = document.createElement('div');
+    controlsBox.classList.add('controls');
+    game.prepend(controlsBox);
+    const buttons = ['Stop', 'Reset', 'Save' ,'BestResults'];
+
+    for (let i = 0; i < buttons.length; i++) {
+        const button = document.createElement('button');
+        button.textContent = buttons[i];
+        button.classList.add(buttons[i])
+        controlsBox.append(button)
+    }
+
+    document.querySelector('.Reset').addEventListener('click', function () {
+        initMatrix(aboutGame.size, aboutGame.size);
+    }) 
+   
+    
+}
 
 function renderField(mas) {
+    const wrapper = document.createElement('div')
     const field = document.createElement('div');
     const fieldBox = document.createElement('div')
     const game = document.createElement('div');
     field.classList.add('puzzleField');
-    field.style.gridTemplateColumns = `repeat(${mas.length} , 80px)`;
-    field.style.gridTemplateRows = `repeat(${mas.length} , 80px)`;
-    document.body.prepend(game);
+    field.style.gridTemplateColumns = `repeat(${mas.length} , calc(100% / ${mas.length}))`;
+    wrapper.classList.add('wrapper')
+    // document.body.prepend(game);
+    document.body.prepend(wrapper);
     game.classList.add('game');
     game.append(field);
-
+    wrapper.append(game)
     for (let i = 0; i < mas.length; i++) {
         for (let k = 0; k < mas.length; k++) {
             const fieldBox = document.createElement('div');
@@ -68,52 +106,18 @@ function renderField(mas) {
             fieldBox.textContent = mas[i][k];
             fieldBox.id = `${i}-${k}`;
             fieldBox.setAttribute('data-box', 'box')
-            fieldBox.setAttribute('name', 'box')
+
         }
     }
 
-    const controlBox = document.createElement('div');
-    controlBox.classList.add('controls');
+    renderButtons(game)
+    renderControls(game)
 
-    const message = document.createElement('div');
-    message.classList.add('message')
-    message.textContent = 'xoxo'
-    controlBox.insertAdjacentElement("afterbegin", message)
-    game.prepend(controlBox)
-
-    // for (let i = 0; i < 6; i++) {
-    //     const button = document.createElement('button');
-    //     button.textContent = `${i + 3}X${i + 3}`;
-    //     button.setAttribute('data-size', i + 3)
-    //     controlBox.append(button)
-    // }
     game.addEventListener('click', (e) => {
         movePuzzle(e)
     });
 
 }
-
-function startTimer() {
-    if (!aboutGame.InProgress) {
-        aboutGame.InProgress = true,
-            aboutGame.startGame = new Date();
-        let timerPlace = document.createElement('p');
-        document.querySelector('game').append(timerPlace)
-        let time = setInterval(() => {
-            timerPlace.textContent = `${new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3)}`
-            console.log(new Date(new Date() - aboutGame.startGame).toLocaleTimeString().slice(3))
-
-        }, 1000);
-    }
-
-}
-
-function countSteps() {
-    aboutGame.steps++;
-    console.log(aboutGame.steps)
-}
-
-
 
 function checkWinCondition() {
     let arr = []
@@ -139,11 +143,15 @@ function checkWinCondition() {
 }
 
 function movePuzzle(e) {
-    startTimer()
-    countSteps()
+    
+    console.log(aboutGame.size)
 
     if (e.target.classList.contains('puzzleBox')) {
+        startTimer()
+        countSteps()
+        
         let width = document.querySelector('.puzzleBox').clientWidth + 8;
+        let height = document.querySelector('.puzzleBox').clientHeight + 8;
         // console.dir(elementWidth)
         let pos = e.target.id.split('-');
         let row = parseInt(pos[0]);
@@ -151,16 +159,16 @@ function movePuzzle(e) {
 
         // moveTop
         if (document.getElementById(`${row - 1}-${col}`)?.textContent === '0') {
-            e.target.style.transform += `translateY(-${width}px)`;
-            document.getElementById(`${row - 1}-${col}`).style.transform += `translateY(${width}px)`;
+            e.target.style.transform += `translateY(-${height}px)`;
+            document.getElementById(`${row - 1}-${col}`).style.transform += `translateY(${height}px)`;
             document.getElementById(`${row - 1}-${col}`).id = `${row}-${col}`;
             e.target.id = `${row - 1}-${col}`;
 
         }
         //moveDown
         if (document.getElementById(`${row + 1}-${col}`)?.textContent === '0') {
-            e.target.style.transform += `translateY(${width}px)`;
-            document.getElementById(`${row + 1}-${col}`).style.transform += `translateY(-${width}px)`;
+            e.target.style.transform += `translateY(${height}px)`;
+            document.getElementById(`${row + 1}-${col}`).style.transform += `translateY(-${height}px)`;
             document.getElementById(`${row + 1}-${col}`).id = `${row}-${col}`;
             e.target.id = `${row + 1}-${col}`;
 
@@ -182,5 +190,22 @@ function movePuzzle(e) {
             e.target.id = `${row}-${col + 1}`;
         }
     }
+}
+
+function clearField() {
+    document.querySelector('.wrapper').remove();
+};
+
+function startTimer() {
+    if (!aboutGame.InProgress) {
+        aboutGame.InProgress = true,
+            aboutGame.startGame = new Date();
+        let timerPlace = document.createElement('p');
+
+    }
+
+}
+function countSteps() {
+    aboutGame.steps++;
 }
 
