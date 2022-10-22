@@ -1,17 +1,21 @@
 * {
     box-sizing: border-box;
 }
+
 body {
     margin: 0;
 }
+
 .game {
     display: flex;
     align-items: center;
     flex-direction: column;
-    background-color: rgba(94, 5, 5, 0.801)  ;
+    background-color: rgba(94, 5, 5, 0.801);
     height: 100vh;
-    gap: 50px;
+    gap: 10px;
     justify-content: center;
+    text-align: center;
+    
 }
 
 .puzzleField {
@@ -20,11 +24,16 @@ body {
 }
 
 .message {
-    color: #fff;
+    color: green;
     margin-top: 16%;
-    font-size: 30px;
+    font-size: 100px;
     text-align: center;
     /* display: none; */
+    /* text-align: center; */
+    margin: 0;
+    position: absolute;
+    z-index: 999;
+    max-width: 700px;
 }
 
 .puzzleBox {
@@ -39,53 +48,91 @@ body {
     background-color: white;
     box-shadow: 3px 3px black;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.5s;
     border-radius: 7px;
-   
-    
+
+
+}
+
+button {
+    cursor: pointer;
+    color: #fff;
+    background-color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+    padding: 5px;
+    transition: all 0.4s;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #fff;
+    color: black;
+ 
 }
 
 
+.steps {
+    /* position: absolute;
+    left: -274px;
+    bottom: -76px; */
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    font-size: 30px;
+    color: #fff;
+    /* max-height: 25px; */
+    gap: 50px;
+    position: relative;
+}
 
 .emptyBox {
     background-color: black;
     margin: 3px;
     padding: 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.5s;
     border-radius: 7px;
 
 }
 
 
-@media (max-width : 715px){
+@media (max-width : 715px) {
     .puzzleField {
         width: 600px;
     }
 }
 
-@media (max-width : 600px){
+@media (max-width : 600px) {
     .puzzleField {
         width: 450px;
     }
 }
 
-@media (max-width : 450px){
+@media (max-width : 450px) {
     .puzzleField {
         width: 350px;
     }
 }
 
-@media (max-width : 360px){
+@media (max-width : 360px) {
     .puzzleField {
         width: 320px;
     }
 }
 
 
+.hide {
+    opacity: 0;
+    transition: all 0s;
+}
 
+.hoveredGreen {
+    border: 5px solid green;
+}
 
-
-
-
-
+.hoveredRed {
+    border: 5px solid red;
+}
