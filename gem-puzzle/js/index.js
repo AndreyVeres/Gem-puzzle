@@ -13,7 +13,13 @@ let sound = {
     save: new Audio('foto.mp3'),
     shaffle: new Audio('shuffle.mp3'),
     reset: new Audio('reset.mp3'),
+    result: new Audio('results.mp3'),
+    showResult : new Audio('showresult.mp3')
 }
+let bestResults = [];
+try {
+    bestResults = [...JSON.parse(localStorage.getItem('results'))];
+} catch { }
 
 for (let s in sound) {
     sound[s].volume = 0
@@ -21,15 +27,16 @@ for (let s in sound) {
 
 initMatrix(4, 4);
 
+
 function shuffleAndStart() {
     localStorage.removeItem('savedGame')
     localStorage.removeItem('savedTime')
     localStorage.removeItem('savedSteps')
+
     initMatrix(aboutGame.size, aboutGame.size)
 
     sound.shaffle.play()
     trackGame();
-
 }
 
 function save() {
@@ -73,8 +80,6 @@ function sortPuzzle(mas) {
         }
     }
 
-
-    console.log(sum)
     if (sum % 2 === 0) return mas;
     else return sortPuzzle(mas)
 
@@ -103,15 +108,11 @@ function initMatrix(x, y) {
 
     mas = sortPuzzle(mas);
 
-
     if (localStorage.getItem('savedGame')) {
         renderField(JSON.parse(localStorage.getItem('savedGame')))
     } else {
         renderField(mas)
     }
-
-
-
 }
 
 function renderButtons(game) {
@@ -121,7 +122,8 @@ function renderButtons(game) {
     for (let i = 0; i < 6; i++) {
         const button = document.createElement('button');
         button.textContent = `${i + 3}X${i + 3}`;
-        button.setAttribute('data-size', i + 3)
+        button.setAttribute('data-size', i + 3);
+        button.classList.add('size__btn')
         buttonBox.append(button)
 
         button.addEventListener('click', function () {
@@ -137,7 +139,6 @@ function renderButtons(game) {
 
             initMatrix(aboutGame.size, aboutGame.size)
         })
-
     }
 }
 
@@ -145,14 +146,23 @@ function renderControls(game) {
     const controlsBox = document.createElement('div');
     controlsBox.classList.add('controls');
     game.prepend(controlsBox);
-    const buttons = ['Shuffle', 'Stop', 'Reset', 'Save', 'BestResults', 'Sound'];
+    const buttons = ['Shuffle', 'Stop', 'Reset', 'Sound', 'Results', 'Save'];
 
+    // for (let i = 0; i < buttons.length; i++) {
+    //     const button = document.createElement('button');
+    //     button.textContent = buttons[i];
+    //     button.classList.add(buttons[i])
+    //     controlsBox.append(button)
+    // }
+
+    
     for (let i = 0; i < buttons.length; i++) {
         const button = document.createElement('button');
-        button.textContent = buttons[i];
         button.classList.add(buttons[i])
         controlsBox.append(button)
     }
+
+
 
     document.querySelector('.Reset').addEventListener('click', function () {
         localStorage.removeItem('savedGame')
@@ -172,23 +182,30 @@ function renderControls(game) {
 
     document.querySelector('.Sound').classList.add(aboutGame.vol)
     document.querySelector('.Sound').addEventListener('click', function () {
-        let n = null ;
-        if(aboutGame.vol === 'OFF'){
+        
+        let n = null;
+        if (aboutGame.vol === 'OFF') {
             this.classList.remove('OFF')
             this.classList.add('ON')
             aboutGame.vol = 'ON'
             n = 1
+           
         }
-        else if(aboutGame.vol === 'ON'){
+        else if (aboutGame.vol === 'ON') {
             this.classList.remove('ON')
             this.classList.add('OFF')
             aboutGame.vol = 'OFF'
             n = 0
+           
         }
         for (let s in sound) {
             sound[s].volume = n
         }
+    });
+    document.querySelector('.Results').addEventListener('click', function () {
+        renderResults()
     })
+
     renderStats(controlsBox)
 }
 function renderStats(controlsBox) {
@@ -238,8 +255,6 @@ function renderField(mas) {
             // fieldBox.addEventListener('click' , sound)
         }
     }
-
-
     renderButtons(game)
     renderControls(game)
 
@@ -251,11 +266,8 @@ function renderField(mas) {
         dragAndDrop(e)
 
     });
-
-    // document.querySelector('.puzzleField').addEventListener('click' , function() {
-    //     console.log(mas)
-    // })
 }
+
 
 function dragAndDrop(e) {
     let t = e
@@ -277,6 +289,8 @@ function dragAndDrop(e) {
     let right = document.getElementById(`${row}-${col + 1}`)?.textContent === '0';
 
     let dragable = top || button || left || right
+
+
 
     target.addEventListener('dragend', function () {
         target.classList.remove('hide');
@@ -305,17 +319,17 @@ function dragAndDrop(e) {
     }, { once: true })
 }
 
-function checkWinCondition() {  //REWORK
+function checkWinCondition() {
     let arr = []
     let row = 0
     let col = 0
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < aboutGame.winCondition.length; i++) {
         let current = document.getElementById(`${row}-${col}`);
         if (parseInt(current.textContent === 0)) continue
         arr.push(parseInt(current.textContent))
-        if (row == 3 && col == 3) break;
+        if (row == aboutGame.size && col == aboutGame.size) break;
         col++
-        if (col == 3) {
+        if (col == aboutGame.size) {
             col = 0;
             row++
         }
@@ -325,8 +339,6 @@ function checkWinCondition() {  //REWORK
             return false
         }
     }
-
-
     return true;
 }
 
@@ -346,6 +358,10 @@ function movePuzzle(e) {
             document.getElementById(`${row - 1}-${col}`).id = `${row}-${col}`;
             e.target.id = `${row - 1}-${col}`;
             // aboutGame.sound.play()
+            e.target.style.boxShadow = `3px 3px 70px -20px red`
+            setTimeout(() => {
+                    e.target.style.boxShadow = null
+            }, 600);
             sound.move.play()
             countSteps()
         }
@@ -357,7 +373,10 @@ function movePuzzle(e) {
             e.target.id = `${row + 1}-${col}`;
             countSteps()
             sound.move.play()
-            // aboutGame.sound.play()
+            e.target.style.boxShadow = `3px 3px 70px -20px red`
+            setTimeout(() => {
+                    e.target.style.boxShadow = null
+            }, 600);
         }
         // moveLeft
         if (document.getElementById(`${row}-${col - 1}`)?.textContent === '0') {
@@ -367,7 +386,10 @@ function movePuzzle(e) {
             e.target.id = `${row}-${col - 1}`;
             countSteps()
             sound.move.play()
-            // aboutGame.sound.play()
+            e.target.style.boxShadow = `3px 3px 70px -20px red`
+            setTimeout(() => {
+                    e.target.style.boxShadow = null
+            }, 600);
         }
         //moveRight
         if (document.getElementById(`${row}-${col + 1}`)?.textContent === '0') {
@@ -377,12 +399,17 @@ function movePuzzle(e) {
             e.target.id = `${row}-${col + 1}`;
             countSteps()
             sound.move.play()
-            // aboutGame.sound.play()
+            e.target.style.boxShadow = `3px 3px 70px -20px red`
+            setTimeout(() => {
+                    e.target.style.boxShadow = null
+            }, 600);
         }
 
         if (checkWinCondition()) {
             finishGame()
         }
+
+       
     }
 }
 
@@ -391,7 +418,6 @@ function clearField() {
 };
 
 function finishGame() {
-
     aboutGame.InProgress = false;
     clearInterval(aboutGame.timer);
 
@@ -399,6 +425,17 @@ function finishGame() {
     message.classList.add('message');
     document.querySelector('.game').insertAdjacentElement('afterbegin', message)
     message.textContent = `Hooray! You solved the puzzle in ${document.querySelector('.timer').textContent} and ${aboutGame.steps} moves!`
+    sound.result.play()
+    setTimeout(() => {
+        message.remove();
+        initMatrix(aboutGame.size, aboutGame.size);
+    }, 3000);
+
+    setTimeout(() => {
+       
+        sound.result.pause()
+        sound.result.load()
+    }, 5000);
 
     const result = {
         steps: aboutGame.steps,
@@ -406,11 +443,15 @@ function finishGame() {
         size: aboutGame.size,
         date: new Date()
     }
+    aboutGame.steps = 0;
+    bestResults.push(result);
 
-    localStorage.setItem('result', JSON.stringify(result))
-
+    localStorage.setItem('results', JSON.stringify(bestResults))
 }
 
+
+
+// finishGame()
 function trackGame() {
     aboutGame.InProgress = true
     try {
@@ -439,6 +480,35 @@ function timer(m = 0, s = 0) {
 }
 
 function renderResults() {
+    const resultBox = document.createElement('div');
+    const titles = document.createElement('div');
+    resultBox.classList.add('results');
+    titles.classList.add('results__item', 'titles');
+    titles.innerHTML = `
+        <p class="title">STEPS</p>
+        <p class="title">TIME</p>
+        <p class="title">SIZE</p>
+        <img class="close" src="./close.svg">
+    `
+    document.querySelector('.game').append(resultBox);
+    resultBox.append(titles);
+
+    for (let i = 0; i < bestResults.length; i++) {
+        const result = document.createElement('div');
+        result.innerHTML = ` 
+            <p class="steps result__steps">${bestResults[i].steps}</p>
+            <p class="time">${bestResults[i].time}</p>
+            <p class="size">${bestResults[i].size} X ${bestResults[i].size}</p>
+        `;
+        result.classList.add('results__item')
+        resultBox.append(result)
+    }
+   sound.showResult.play()
+    document.querySelector('.close').addEventListener('click', function () {
+        sound.result.pause()
+        sound.result.load()
+        resultBox.remove()
+    })
 }
 
 function addZero(n) {
@@ -447,3 +517,6 @@ function addZero(n) {
     }
     return n
 }
+
+
+
