@@ -136,3 +136,12 @@ button:hover {
 .hoveredRed {
     border: 5px solid red;
 }
+
+
+.ON {
+    color: green;
+}
+
+.OFF {
+    color: red;
+}

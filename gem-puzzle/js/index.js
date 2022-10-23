@@ -1,4 +1,3 @@
-
 let aboutGame = {
     InProgress: false,
     steps: JSON.parse(localStorage.getItem('savedSteps')) || 0,
@@ -6,21 +5,31 @@ let aboutGame = {
     winCondition: [],
     InProgress: false,
     size: 4,
-
+    vol: 'OFF',
 }
 
+let sound = {
+    move: new Audio('move.mp3'),
+    save: new Audio('foto.mp3'),
+    shaffle: new Audio('shuffle.mp3'),
+    reset: new Audio('reset.mp3'),
+}
+
+for (let s in sound) {
+    sound[s].volume = 0
+}
 
 initMatrix(4, 4);
-
-
-// finishGame()
 
 function shuffleAndStart() {
     localStorage.removeItem('savedGame')
     localStorage.removeItem('savedTime')
     localStorage.removeItem('savedSteps')
     initMatrix(aboutGame.size, aboutGame.size)
+
+    sound.shaffle.play()
     trackGame();
+
 }
 
 function save() {
@@ -41,7 +50,7 @@ function save() {
     message.textContent = 'Game Saved'
     message.classList.add('message')
     document.querySelector('.buttons').insertAdjacentElement('afterend', message)
-
+    sound.save.play()
     setTimeout(() => {
         message.remove()
     }, 1000);
@@ -105,7 +114,6 @@ function initMatrix(x, y) {
 
 }
 
-
 function renderButtons(game) {
     const buttonBox = document.createElement('div');
     buttonBox.classList.add('buttons');
@@ -137,7 +145,7 @@ function renderControls(game) {
     const controlsBox = document.createElement('div');
     controlsBox.classList.add('controls');
     game.prepend(controlsBox);
-    const buttons = ['Shuffle', 'Stop', 'Reset', 'Save', 'BestResults'];
+    const buttons = ['Shuffle', 'Stop', 'Reset', 'Save', 'BestResults', 'Sound'];
 
     for (let i = 0; i < buttons.length; i++) {
         const button = document.createElement('button');
@@ -150,6 +158,7 @@ function renderControls(game) {
         localStorage.removeItem('savedGame')
         localStorage.removeItem('savedTime')
         localStorage.removeItem('savedSteps')
+        sound.reset.play()
         initMatrix(aboutGame.size, aboutGame.size);
     })
 
@@ -161,8 +170,25 @@ function renderControls(game) {
         save()
     })
 
-
-
+    document.querySelector('.Sound').classList.add(aboutGame.vol)
+    document.querySelector('.Sound').addEventListener('click', function () {
+        let n = null ;
+        if(aboutGame.vol === 'OFF'){
+            this.classList.remove('OFF')
+            this.classList.add('ON')
+            aboutGame.vol = 'ON'
+            n = 1
+        }
+        else if(aboutGame.vol === 'ON'){
+            this.classList.remove('ON')
+            this.classList.add('OFF')
+            aboutGame.vol = 'OFF'
+            n = 0
+        }
+        for (let s in sound) {
+            sound[s].volume = n
+        }
+    })
     renderStats(controlsBox)
 }
 function renderStats(controlsBox) {
@@ -176,10 +202,10 @@ function renderStats(controlsBox) {
     statsBox.classList.add('stats');
     timer.classList.add('timer');
     steps.classList.add('steps');
-    statsBox.insertAdjacentElement('afterbegin' , timer);
-    statsBox.insertAdjacentElement('afterbegin' , steps);
+    statsBox.insertAdjacentElement('afterbegin', timer);
+    statsBox.insertAdjacentElement('afterbegin', steps);
 
-    controlsBox.insertAdjacentElement( 'afterend',statsBox);
+    controlsBox.insertAdjacentElement('afterend', statsBox);
 }
 
 function renderField(mas) {
@@ -209,6 +235,7 @@ function renderField(mas) {
             field.append(fieldBox);
             fieldBox.textContent = mas[i][k];
             fieldBox.id = `${i}-${k}`;
+            // fieldBox.addEventListener('click' , sound)
         }
     }
 
@@ -229,7 +256,6 @@ function renderField(mas) {
     //     console.log(mas)
     // })
 }
-
 
 function dragAndDrop(e) {
     let t = e
@@ -272,11 +298,8 @@ function dragAndDrop(e) {
 
     })
 
-    field.addEventListener('dragleave', function () {
-
-    })
-
     field.addEventListener('drop', function (e) {
+        // sound()
         movePuzzle(t)
         document.querySelector('.emptyBox').classList.remove('hoveredGreen', 'hoveredRed')
     }, { once: true })
@@ -308,14 +331,10 @@ function checkWinCondition() {  //REWORK
 }
 
 function movePuzzle(e) {
-
     if (e.target.classList.contains('puzzleBox')) {
-
         if (!aboutGame.InProgress) trackGame()
-
         let width = document.querySelector('.puzzleBox').clientWidth + 8;
         let height = document.querySelector('.puzzleBox').clientHeight + 8;
-
         let pos = e.target.id.split('-');
         let row = parseInt(pos[0]);
         let col = parseInt(pos[1]);
@@ -326,7 +345,8 @@ function movePuzzle(e) {
             document.getElementById(`${row - 1}-${col}`).style.transform += `translateY(${height}px)`;
             document.getElementById(`${row - 1}-${col}`).id = `${row}-${col}`;
             e.target.id = `${row - 1}-${col}`;
-
+            // aboutGame.sound.play()
+            sound.move.play()
             countSteps()
         }
         //moveDown
@@ -336,7 +356,8 @@ function movePuzzle(e) {
             document.getElementById(`${row + 1}-${col}`).id = `${row}-${col}`;
             e.target.id = `${row + 1}-${col}`;
             countSteps()
-
+            sound.move.play()
+            // aboutGame.sound.play()
         }
         // moveLeft
         if (document.getElementById(`${row}-${col - 1}`)?.textContent === '0') {
@@ -345,6 +366,8 @@ function movePuzzle(e) {
             document.getElementById(`${row}-${col - 1}`).id = `${row}-${col}`;
             e.target.id = `${row}-${col - 1}`;
             countSteps()
+            sound.move.play()
+            // aboutGame.sound.play()
         }
         //moveRight
         if (document.getElementById(`${row}-${col + 1}`)?.textContent === '0') {
@@ -353,6 +376,8 @@ function movePuzzle(e) {
             document.getElementById(`${row}-${col + 1}`).id = `${row}-${col}`;
             e.target.id = `${row}-${col + 1}`;
             countSteps()
+            sound.move.play()
+            // aboutGame.sound.play()
         }
 
         if (checkWinCondition()) {
@@ -394,9 +419,6 @@ function trackGame() {
     } catch {
         timer()
     }
-
-
-
 }
 function countSteps() {
     aboutGame.steps++;
@@ -414,7 +436,6 @@ function timer(m = 0, s = 0) {
         }
         document.querySelector('.timer').textContent = `${addZero(minutes)}:${addZero(seconds)}`
     }, 1000);
-
 }
 
 function renderResults() {
