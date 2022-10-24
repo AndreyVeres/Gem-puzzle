@@ -8,13 +8,59 @@ let aboutGame = {
     vol: 'OFF',
 }
 
+
+
+function sortPuzzle2(mas) {
+
+    for (let i = 0; i < mas.length; i++) {
+        mas[i].sort(() => Math.random() - 0.5)
+        mas.sort(() => Math.random() - 0.5)
+    }
+
+    let arr = JSON.parse(JSON.stringify(mas)).flat(1);
+    let sum = 0;
+    let count = 1;
+    let row = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+        if (count === mas.length) {
+            count = 0;
+            row += 1;
+        }
+        if (arr[i] === 0) {
+            continue;
+        }
+        let current = arr[i];
+
+        for (let k = i; k < arr.length; k++) {
+            if (arr[k] === 0) {
+                if (arr.length % 2 === 0) {
+                    
+                    sum += row
+                } else {
+                    continue
+                }
+            }
+            if (arr[k] < current) sum += 1
+        }
+        count += 1;
+    }
+    console.log(arr , sum)
+    if(mas.length % 2 === 0 && sum % 2 !== 0) return mas
+    if(mas.length % 2 !== 0 && sum % 2 === 0 ) return mas
+    return sortPuzzle2(mas)
+   
+
+}
+
+
 let sound = {
     move: new Audio('move.mp3'),
     save: new Audio('foto.mp3'),
     shaffle: new Audio('shuffle.mp3'),
     reset: new Audio('reset.mp3'),
     result: new Audio('results.mp3'),
-    showResult : new Audio('showresult.mp3')
+    showResult: new Audio('showresult.mp3')
 }
 let bestResults = [];
 try {
@@ -71,15 +117,25 @@ function sortPuzzle(mas) {
 
     let arr = JSON.parse(JSON.stringify(mas)).flat(1)
     let sum = 0;
+
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i] === 0) continue;
+        if (arr[i] === 0) {
+            continue;
+        }
         let current = arr[i];
         for (let k = i; k < arr.length; k++) {
-            if (arr[k] === 0) continue
+            if (arr[k] === 0) {
+                if (arr.length % 2 === 0) {
+                    sum += i + 1
+
+                } else {
+                    continue
+                }
+            }
             if (arr[k] < current) sum += 1
         }
     }
-
+   
     if (sum % 2 === 0) return mas;
     else return sortPuzzle(mas)
 
@@ -106,7 +162,7 @@ function initMatrix(x, y) {
     aboutGame.winCondition.pop()
     aboutGame.winCondition.push(0)
 
-    mas = sortPuzzle(mas);
+    mas = sortPuzzle2(mas);
 
     if (localStorage.getItem('savedGame')) {
         renderField(JSON.parse(localStorage.getItem('savedGame')))
@@ -155,7 +211,7 @@ function renderControls(game) {
     //     controlsBox.append(button)
     // }
 
-    
+
     for (let i = 0; i < buttons.length; i++) {
         const button = document.createElement('button');
         button.classList.add(buttons[i])
@@ -182,21 +238,21 @@ function renderControls(game) {
 
     document.querySelector('.Sound').classList.add(aboutGame.vol)
     document.querySelector('.Sound').addEventListener('click', function () {
-        
+
         let n = null;
         if (aboutGame.vol === 'OFF') {
             this.classList.remove('OFF')
             this.classList.add('ON')
             aboutGame.vol = 'ON'
             n = 1
-           
+
         }
         else if (aboutGame.vol === 'ON') {
             this.classList.remove('ON')
             this.classList.add('OFF')
             aboutGame.vol = 'OFF'
             n = 0
-           
+
         }
         for (let s in sound) {
             sound[s].volume = n
@@ -360,7 +416,7 @@ function movePuzzle(e) {
             // aboutGame.sound.play()
             e.target.style.boxShadow = `3px 3px 70px -20px red`
             setTimeout(() => {
-                    e.target.style.boxShadow = null
+                e.target.style.boxShadow = null
             }, 600);
             sound.move.play()
             countSteps()
@@ -375,7 +431,7 @@ function movePuzzle(e) {
             sound.move.play()
             e.target.style.boxShadow = `3px 3px 70px -20px red`
             setTimeout(() => {
-                    e.target.style.boxShadow = null
+                e.target.style.boxShadow = null
             }, 600);
         }
         // moveLeft
@@ -388,7 +444,7 @@ function movePuzzle(e) {
             sound.move.play()
             e.target.style.boxShadow = `3px 3px 70px -20px red`
             setTimeout(() => {
-                    e.target.style.boxShadow = null
+                e.target.style.boxShadow = null
             }, 600);
         }
         //moveRight
@@ -401,7 +457,7 @@ function movePuzzle(e) {
             sound.move.play()
             e.target.style.boxShadow = `3px 3px 70px -20px red`
             setTimeout(() => {
-                    e.target.style.boxShadow = null
+                e.target.style.boxShadow = null
             }, 600);
         }
 
@@ -409,7 +465,7 @@ function movePuzzle(e) {
             finishGame()
         }
 
-       
+
     }
 }
 
@@ -432,7 +488,7 @@ function finishGame() {
     }, 3000);
 
     setTimeout(() => {
-       
+
         sound.result.pause()
         sound.result.load()
     }, 5000);
@@ -503,7 +559,7 @@ function renderResults() {
         result.classList.add('results__item')
         resultBox.append(result)
     }
-   sound.showResult.play()
+    sound.showResult.play()
     document.querySelector('.close').addEventListener('click', function () {
         sound.result.pause()
         sound.result.load()
