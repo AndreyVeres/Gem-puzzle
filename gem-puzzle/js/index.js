@@ -10,6 +10,7 @@ let aboutGame = {
 
 
 
+
 function sortPuzzle2(mas) {
 
     for (let i = 0; i < mas.length; i++) {
@@ -19,37 +20,53 @@ function sortPuzzle2(mas) {
 
     let arr = JSON.parse(JSON.stringify(mas)).flat(1);
     let sum = 0;
-    let count = 1;
+    let count = 0;
     let row = 0;
-
     for (let i = 0; i < arr.length; i++) {
+
         if (count === mas.length) {
             count = 0;
             row += 1;
         }
-        if (arr[i] === 0) {
+        if (arr[i] === 0 && mas.length % 2 === 0) {
+            sum += row;
             continue;
         }
-        let current = arr[i];
+
 
         for (let k = i; k < arr.length; k++) {
-            if (arr[k] === 0) {
-                if (arr.length % 2 === 0) {
-                    
-                    sum += row
-                } else {
-                    continue
-                }
+
+
+            if (arr[k] > 0) {
+                if (arr[i] > arr[k]) sum += 1
             }
-            if (arr[k] < current) sum += 1
+
+
         }
         count += 1;
     }
-    console.log(arr , sum)
-    if(mas.length % 2 === 0 && sum % 2 !== 0) return mas
-    if(mas.length % 2 !== 0 && sum % 2 === 0 ) return mas
-    return sortPuzzle2(mas)
-   
+
+    if (mas.length % 2 === 0) {
+        if (sum  % 2 !== 0) {
+
+            return mas
+        } else {
+            return sortPuzzle2(mas)
+        }
+
+    }
+
+    if (mas.length !== 0) {
+        if (sum % 2 === 0) {
+            return mas
+        } else {
+            return sortPuzzle2(mas)
+        }
+    }
+    else {
+        return sortPuzzle2(mas)
+    }
+
 
 }
 
